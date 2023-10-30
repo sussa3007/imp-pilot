@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <!-- iamport.payment.js -->
+    <script type="text/javascript" src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <!--  <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>-->
+    <script th:inline="javascript">
+        var IMP = window.IMP;
+        IMP.init("imp17761258");
+
+        var kakaopayData = {
+            pg: "kakaopay.TC0ONETIME",
+            pay_method: "card",
+            merchant_uid: 'merchant_' + new Date().getTime(),   // 주문번호
+            name: "Prop_123",
+            amount: 1000,                         // 숫자 타입
+            currency: 'KRW', // 기본값: USD(원화 KRW는 페이팔 정책으로 인해 지원하지 않음)
+            buyer_email: "gildong@gmail.com",
+            buyer_name: "홍길동",
+        };
+        var tossData = {
+            pg: "tosspay.tosstest",
+            pay_method: "card",
+            merchant_uid: 'merchant_' + new Date().getTime(),   // 주문번호
+            name: "Prop_123",
+            amount: 1000,                         // 숫자 타입
+            currency: 'KRW', // 기본값: USD(원화 KRW는 페이팔 정책으로 인해 지원하지 않음)
+            buyer_email: "gildong@gmail.com",
+            buyer_name: "홍길동",
+        };
+
+        function requestKakaoPay() {
+            IMP.request_pay(kakaopayData, function (rsp) { // callback
+                console.log(rsp);
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8081/api/order/' + rsp.imp_uid
+                }).done(function (data) {
+                    console.log(data)
+                    console.log(data.data.totalPrice)
+                    console.log(rsp.paid_amount.toString())
+                    if (rsp.paid_amount.toString() === data.totalPrice) {
+                        alert("결제 성공");
+                    } else {
+                        alert("결제 실패");
+                    }
+                });
+            });
+        }
+
+        function requestTossPay() {
+            IMP.request_pay(tossData, function (rsp) { // callback
+                console.log(rsp);
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8081/api/order/' + rsp.imp_uid
+                }).done(function (data) {
+                    console.log(data)
+                    if (rsp.paid_amount === data.data.totalPrice) {
+                        alert("결제 성공");
+                    } else {
+                        alert("결제 실패");
+                    }
+                });
+            });
+        }
+
+
+        // Paypal
+        var paypalData = {
+            pg: "paypal_v2.UFYSG9T7RFW2A",
+            pay_method: "paypal",
+            merchant_uid: 'merchant_' + new Date().getTime(),   // 주문번호
+            name: "Prop_123",
+            amount: 18.99,                         // 숫자 타입
+            currency: 'USD', // 기본값: USD(원화 KRW는 페이팔 정책으로 인해 지원하지 않음)
+            buyer_email: "gildong@gmail.com",
+            buyer_name: "홍길동",
+        };
+
+
+
+        window.onload = function () {
+            IMP.init("imp17761258");
+
+            IMP.loadUI('paypal-spb', paypalData,
+                function (rsp) { // callback
+                    console.log(rsp);
+                    $.ajax({
+                        type: 'POST',
+                        // url: '/verify/' + rsp.imp_uid
+                        url: 'http://localhost:8081/api/order/' + rsp.imp_uid
+                    }).done(function (data) {
+                        console.log(data)
+                        if (rsp.paid_amount.toString() === data.data.totalPrice) {
+                            alert("결제 성공");
+                        } else {
+                            alert("결제 실패");
+                        }
+                    });
+                }
+            );
+        };
+
+        // kg 모빌리언스
+        var mobilData = {
+            pg: "mobilians.170622040674",
+            pay_method: "phone",
+            merchant_uid: 'merchant_' + new Date().getTime(),   // 주문번호
+            name: "Prop_123",
+            amount: 1000,                         // 숫자 타입
+            currency: 'KRW', // 기본값: USD(원화 KRW는 페이팔 정책으로 인해 지원하지 않음)
+            buyer_email: "gildong@gmail.com",
+            buyer_name: "홍길동",
+        };
+
+        function requestKgMobile() {
+            IMP.request_pay(mobilData, function (rsp) { // callback
+                console.log(rsp);
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8081/api/order/' + rsp.imp_uid
+                }).done(function (data) {
+                    console.log(data)
+                    if (rsp.paid_amount === data.data.totalPrice) {
+                        alert("결제 성공");
+                    } else {
+                        alert("결제 실패");
+                    }
+                });
+            });
+        }
+
+        // kg 이니시스
+        var ignisData = {
+            pg: "html5_inicis.INIpayTest",
+            pay_method: "card",
+            merchant_uid: 'merchant_' + new Date().getTime(),   // 주문번호
+            name: "Prop_123",
+            amount: 1000,                         // 숫자 타입
+            currency: 'KRW', // 기본값: USD(원화 KRW는 페이팔 정책으로 인해 지원하지 않음)
+            buyer_email: "gildong@gmail.com",
+            buyer_name: "홍길동",
+        };
+
+        function requestKgIni() {
+            IMP.request_pay(ignisData, function (rsp) { // callback
+                console.log(rsp);
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8081/api/order/' + rsp.imp_uid
+                }).done(function (data) {
+                    console.log(data)
+                    if (rsp.paid_amount === data.data.totalPrice) {
+                        alert("결제 성공");
+                    } else {
+                        alert("결제 실패");
+                    }
+                });
+            });
+        }
+
+    </script>
+    <meta charset="UTF-8">
+    <title>Sample Payment</title>
+</head>
+<body>
+<button onclick="requestKakaoPay()">Kakao 결제하기</button> <!-- 결제하기 버튼 생성 -->
+<button onclick="requestTossPay()">Toss 결제하기</button> <!-- 결제하기 버튼 생성 -->
+<button onclick="requestKgMobile()">KG 모빌리언스 결제하기</button> <!-- 결제하기 버튼 생성 -->
+<button onclick="requestKgIni()">KG 이니시스 결제하기</button> <!-- 결제하기 버튼 생성 -->
+<div  style="margin-top: 2em">
+    Paypal 일반결제
+</div>
+<div class="portone-ui-container" data-portone-ui-type="paypal-spb"
+
+>
+    <!-- 3. 여기에 페이팔 버튼이 생성됩니다. -->
+</div>
+</body>
+</html>
